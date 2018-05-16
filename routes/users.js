@@ -60,13 +60,20 @@ router.get('/:id', function(req, res, next) {
 });
 
 router.get('/:id/devices', function(req, res, next) {
-    res.json(
-        devices.map(d => ({
-            deviceId: d.id,
-            deviceType: d.type,
-            locked: d.locked === true,
-            links : [ {rel: "self", link: `${base}/users/${req.params.id}/devices/${d.id}`, methods: "GET, DELETE"} ]
-        }))
+	let userId = req.params.id;
+	res.json(
+		{
+			owner: userId,
+			devices: devices.map(d => ({
+				deviceId: d.id,
+				deviceType: d.type,
+				locked: d.locked === true,
+				links: [{rel: "self", link: `${base}/users/${userId}/devices/${d.id}`, methods: "GET, DELETE"}]
+			})),
+			links: [
+				{rel: "self", link: `${base}/users/${userId}/devices`, methods: "GET, POST" },
+			]
+		}
     );
 });
 
@@ -94,6 +101,20 @@ router.get('/:user_id/devices/:device_id/lock', function(req, res, next) {
     let err = new Error('Method not allowed');
     err.status = 405;
     next(err);
+});
+
+router.put('/:user_id/devices/:device_id/lock', function(req, res, next) {
+	let deviceId = req.params.device_id;
+	let device = devices.find((e) => e.id === deviceId);
+	device.locked = true;
+	res.status(200).send(`Device "${deviceId}" has been locked.`);
+});
+
+router.delete('/:user_id/devices/:device_id/lock', function(req, res, next) {
+	let deviceId = req.params.device_id;
+	let device = devices.find((e) => e.id === deviceId);
+	device.locked = false;
+	res.status(200).send(`Device "${deviceId}" has been unlocked.`);
 });
 
 module.exports = router;
