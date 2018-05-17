@@ -3,8 +3,8 @@ const router = express.Router();
 
 const base = "http://localhost:3000";
 
-let users = ["john", "edna", "joe", "kim", "ted", "lisa", "mike", "kyle", "alice", "bob"];
-let devices = [
+let USERS = ["john", "edna", "joe", "kim", "ted", "lisa", "mike", "kyle", "alice", "bob"];
+let DEVICES = [
     {id: "737846327B673", type: "Smoke Detector", locked: false},
     {id: "KK8L3274673IU", type: "Alarm System", locked: false},
     {id: "B87asd888UZ232", type: "Smartphone (iOS)", locked: true}
@@ -18,7 +18,7 @@ router.post('/', function(req, res, next) {
             userCount: result.size,
             pageNumber: 1,
             pageSize: 757,
-            users: users.map(u => ({id: u, link: `${base}/users/${u}`})),
+            users: USERS.map(u => ({id: u, link: `${base}/users/${u}`})),
             links:[ {rel: "next", link: `${base}/users?page=2` } ]
         });
 });
@@ -26,14 +26,14 @@ router.post('/', function(req, res, next) {
 router.get('/', function (req, res) {
 	res.json(
 		{
-			users: users.map((user) => ({
+			users: USERS.map((user) => ({
 				userId: user,
 				links: 	[
 					{rel: "self", link: `${base}/users/${user}`, methods: "GET, DELETE"},
 					{rel: "devices", link: `${base}/users/${user}/devices`, methods: "GET, POST"}
 				]
 			})),
-			pageSize: users.lengh,
+			pageSize: USERS.lengh,
 			pageNumber: 1,
 			links:[ {rel: "next", link: `${base}/users?page=2` } ]
 		}
@@ -64,7 +64,7 @@ router.get('/:id/devices', function(req, res, next) {
 	res.json(
 		{
 			owner: userId,
-			devices: devices.map(d => ({
+			devices: DEVICES.map(d => ({
 				deviceId: d.id,
 				deviceType: d.type,
 				locked: d.locked === true,
@@ -78,7 +78,7 @@ router.get('/:id/devices', function(req, res, next) {
 });
 
 router.get('/:user_id/devices/:device_id', function(req, res, next) {
-    let dev = devices.find(e => req.params.device_id);
+    let dev = DEVICES.find(e => req.params.device_id);
     if (!dev) {
         let err = new Error('Device not found');
         err.status = 404;
@@ -105,14 +105,14 @@ router.get('/:user_id/devices/:device_id/lock', function(req, res, next) {
 
 router.put('/:user_id/devices/:device_id/lock', function(req, res, next) {
 	let deviceId = req.params.device_id;
-	let device = devices.find((e) => e.id === deviceId);
+	let device = DEVICES.find((e) => e.id === deviceId);
 	device.locked = true;
 	res.status(200).send(`Device "${deviceId}" has been locked.`);
 });
 
 router.delete('/:user_id/devices/:device_id/lock', function(req, res, next) {
 	let deviceId = req.params.device_id;
-	let device = devices.find((e) => e.id === deviceId);
+	let device = DEVICES.find((e) => e.id === deviceId);
 	device.locked = false;
 	res.status(200).send(`Device "${deviceId}" has been unlocked.`);
 });
