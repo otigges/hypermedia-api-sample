@@ -1,4 +1,5 @@
 const express = require('express');
+const event_store = require("../lib/event_store");
 const router = express.Router();
 
 const base = "http://localhost:3000";
@@ -107,6 +108,8 @@ router.put('/:user_id/devices/:device_id/lock', function(req, res, next) {
 	let deviceId = req.params.device_id;
 	let device = DEVICES.find((e) => e.id === deviceId);
 	device.locked = true;
+	event_store.onDeviceLocked(deviceId, "john");
+	res.contentType("text/html");
 	res.status(200).send(`Device "${deviceId}" has been locked.`);
 });
 
@@ -114,6 +117,8 @@ router.delete('/:user_id/devices/:device_id/lock', function(req, res, next) {
 	let deviceId = req.params.device_id;
 	let device = DEVICES.find((e) => e.id === deviceId);
 	device.locked = false;
+	event_store.onDeviceUnlocked(deviceId, "john");
+	res.contentType("text/html");
 	res.status(200).send(`Device "${deviceId}" has been unlocked.`);
 });
 
