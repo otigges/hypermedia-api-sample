@@ -51,7 +51,8 @@ router.get('/:id', function(req, res, next) {
     } else {
         res.json({
                 userId: userId,
-                username: "John doe",
+                username: "John Doe",
+								email: "john.doe@example.com",
                 links: [
                     {rel: "self", link: `${base}/users/${userId}`, methods: "GET, DELETE" },
                     {rel: "devices", link: `${base}/users/${userId}/devices`, methods: "GET, POST" }

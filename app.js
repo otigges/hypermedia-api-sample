@@ -1,15 +1,20 @@
-let express = require('express');
-let path = require('path');
-let favicon = require('serve-favicon');
-let logger = require('morgan');
-let cookieParser = require('cookie-parser');
-let bodyParser = require('body-parser');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const promBundle = require("express-prom-bundle");
 
-let routes = require('./routes/index');
-let users = require('./routes/users');
-let events = require('./routes/events');
+const routes = require('./routes/index');
+const users = require('./routes/users');
+const events = require('./routes/events');
 
-let app = express();
+const metricsMiddleware = promBundle({
+	buckets: [0.1, 0.4, 0.7],
+	includeMethod: true
+});
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -17,6 +22,7 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(metricsMiddleware);
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
