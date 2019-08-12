@@ -9,6 +9,7 @@ router.get('/', function(req, res, next) {
         host: req.hostname,
         links: [
           {rel: "self", link: "http://localhost:3000/"},
+          {rel: "metrics", link: "http://localhost:3000/metrics"},
           {rel: "users", link: "http://localhost:3000/users"},
           {rel: "user_by_id", link: "http://localhost:3000/users/{user_id}", templated: true},
           {rel: "search_devices", link: "http://localhost:3000/search/devices?owner={user_id}", templated: true},
