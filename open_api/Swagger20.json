@@ -1,0 +1,188 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Open API for Hypermedia Sample",
+    "contact": {}
+  },
+  "host": "localhost:3000",
+  "basePath": "/DefaultParameterValue",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "Get Service Document",
+        "summary": "getServiceDocument",
+        "operationId": "getServiceDocument",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "type": "object"
+            },
+            "headers": {}
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "description": "Show all users",
+        "summary": "getUsers",
+        "operationId": "getUsers",
+        "deprecated": false,
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "schema": {
+              "$ref": "#/definitions/UsersResponse"
+            },
+            "examples": {
+              "application/json": {
+                "users": [
+                  {
+                    "userId": "john",
+                    "links": [
+                      {
+                        "rel": "self",
+                        "link": "http://localhost:3000/users/john",
+                        "methods": "GET, DELETE"
+                      },
+                      {
+                        "rel": "devices",
+                        "link": "http://localhost:3000/users/john/devices",
+                        "methods": "GET, POST"
+                      }
+                    ]
+                  },
+                  {
+                    "userId": "edna",
+                    "links": [
+                      {
+                        "rel": "self",
+                        "link": "http://localhost:3000/users/edna",
+                        "methods": "GET, DELETE"
+                      },
+                      {
+                        "rel": "devices",
+                        "link": "http://localhost:3000/users/edna/devices",
+                        "methods": "GET, POST"
+                      }
+                    ]
+                  }
+                ],
+                "pageNumber": 1,
+                "links": [
+                  {
+                    "rel": "next",
+                    "link": "http://localhost:3000/users?page=2"
+                  }
+                ]
+              }
+            },
+            "headers": {}
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "port": {
+      "title": "port",
+      "example": 8443,
+      "type": "integer",
+      "format": "int32",
+      "enum": [
+        "8443",
+        "443",
+        "3000"
+      ]
+    },
+    "UsersResponse": {
+      "title": "UsersResponse",
+      "example": {
+        "users": [
+          {
+            "userId": "john",
+            "links": [
+              {
+                "rel": "self",
+                "link": "http://localhost:3000/users/john",
+                "methods": "GET, DELETE"
+              },
+              {
+                "rel": "devices",
+                "link": "http://localhost:3000/users/john/devices",
+                "methods": "GET, POST"
+              }
+            ]
+          },
+          {
+            "userId": "edna",
+            "links": [
+              {
+                "rel": "self",
+                "link": "http://localhost:3000/users/edna",
+                "methods": "GET, DELETE"
+              },
+              {
+                "rel": "devices",
+                "link": "http://localhost:3000/users/edna/devices",
+                "methods": "GET, POST"
+              }
+            ]
+          }
+        ],
+        "pageNumber": 1,
+        "links": [
+          {
+            "rel": "next",
+            "link": "http://localhost:3000/users?page=2"
+          }
+        ]
+      },
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "pageNumber": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "users",
+        "pageNumber",
+        "links"
+      ]
+    }
+  },
+  "tags": []
+}

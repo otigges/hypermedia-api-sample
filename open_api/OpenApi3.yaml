@@ -1,0 +1,123 @@
+openapi: "3.0.0"
+info:
+  title: Open API for Hypermedia Sample
+  version: 1.0.0
+license:
+  name: Apache 2.0
+  url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: https://{host}:{port}/{basePath}
+    description: The local API server
+    variables:
+      host:
+        default: localhost
+      port:
+        enum:
+          - '8443'
+          - '443'
+          - '3000'
+        default: '3000'
+      basePath:
+        default: ''
+paths:
+  /:
+    get:
+      operationId: getServiceDocument
+      summary: Get Service Document
+      responses:
+        '200':
+          description: |-
+            200 response
+          content:
+            application/json:
+              examples:
+                foo:
+                  value: |
+                    {
+                      "service": "User-Device-DB",
+                      "version": "1.0.1",
+                      "description": "This is the service document for the User-Device API.",
+                      "host": "localhost",
+                      "links": [
+                        {
+                          "rel": "self",
+                          "link": "http://localhost:3000/"
+                        },
+                        {
+                          "rel": "metrics",
+                          "link": "http://localhost:3000/metrics"
+                        },
+                      ...
+                      ]
+                    }
+  /users:
+    get:
+      operationId: getUsers
+      summary: Show all users
+      responses:
+        '200':
+          description: |-
+            200 response
+          content:
+            application/json:
+              examples:
+                foo:
+                  value: |
+                    {
+                      "users": [
+                          {
+                              "userId": "john",
+                              "links": [
+                                  {
+                                      "rel": "self",
+                                      "link": "http://localhost:3000/users/john",
+                                      "methods": "GET, DELETE"
+                                  },
+                                  {
+                                      "rel": "devices",
+                                      "link": "http://localhost:3000/users/john/devices",
+                                      "methods": "GET, POST"
+                                  }
+                              ]
+                          },
+                          {
+                              "userId": "edna",
+                              "links": [
+                                  {
+                                      "rel": "self",
+                                      "link": "http://localhost:3000/users/edna",
+                                      "methods": "GET, DELETE"
+                                  },
+                                  {
+                                      "rel": "devices",
+                                      "link": "http://localhost:3000/users/edna/devices",
+                                      "methods": "GET, POST"
+                                  }
+                              ]
+                          }
+                      ],
+                      "pageNumber": 1,
+                      "links": [
+                          {
+                              "rel": "next",
+                              "link": "http://localhost:3000/users?page=2"
+                          }
+                      ]
+                    }
+  /users/{userId}/devices:
+    get:
+      operationId: getUsersDevices
+      summary: Show all devices of given user
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: string
+          required: true
+          description: Unique username
+      responses:
+        '200':
+          description: |-
+            200 response
+          content: "application/json"
+

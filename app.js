@@ -4,6 +4,10 @@ const favicon = require('serve-favicon');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const swaggerUI = require('swagger-ui-express');
+const YAML = require('yamljs');
+const apiDocYaml = YAML.load('./open_api/OpenApi3.yaml');
+const apiDocJson = require('./open_api/OpenApi3.json');
 const promBundle = require("express-prom-bundle");
 const initTracer = require("jaeger-client").initTracer;
 const http = require("http");
@@ -90,6 +94,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// enable Swagger UI
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(apiDocJson));
 
 app.use(function (req, res, next) {
   res.header("Content-Type",'application/json');

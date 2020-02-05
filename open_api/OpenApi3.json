@@ -1,0 +1,328 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Open API for Hypermedia Sample",
+    "contact": {},
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://{host}:{port}/{basePath}",
+      "description": "The local API server",
+      "variables": {
+        "host": {
+          "default": "localhost"
+        },
+        "port": {
+          "enum": [
+            "8443",
+            "443",
+            "3000"
+          ],
+          "default": "3000"
+        },
+        "basePath": {
+          "default": ""
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Get Service Document",
+        "description": "Get Service Document",
+        "operationId": "getServiceDocument",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "200 response"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/users": {
+      "get": {
+        "summary": "Get all users",
+        "description": "Show all users",
+        "operationId": "getUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserList"
+                },
+                "example": {
+                  "users": [
+                    {
+                      "userId": "john",
+                      "links": [
+                        {
+                          "rel": "self",
+                          "link": "http://localhost:3000/users/john",
+                          "methods": "GET, DELETE"
+                        },
+                        {
+                          "rel": "devices",
+                          "link": "http://localhost:3000/users/john/devices",
+                          "methods": "GET, POST"
+                        }
+                      ]
+                    },
+                    {
+                      "userId": "edna",
+                      "links": [
+                        {
+                          "rel": "self",
+                          "link": "http://localhost:3000/users/edna",
+                          "methods": "GET, DELETE"
+                        },
+                        {
+                          "rel": "devices",
+                          "link": "http://localhost:3000/users/edna/devices",
+                          "methods": "GET, POST"
+                        }
+                      ]
+                    }
+                  ],
+                  "pageNumber": 1,
+                  "links": [
+                    {
+                      "rel": "next",
+                      "link": "http://localhost:3000/users?page=2"
+                    }
+                  ]
+                }
+              }
+            },
+            "links": {
+              "GetUserByID": {
+                "operationId": "getUserById",
+                "parameters": {
+                  "userId": "$response.body#/users/userId"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "summary": "Get user by ID",
+        "description": "Get user by unique username",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "required": true,
+            "schema:" :{
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "200 response",
+            "headers": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                },
+                "example": {
+                  "users": [
+                    {
+                      "userId": "john",
+                      "links": [
+                        {
+                          "rel": "self",
+                          "link": "http://localhost:3000/users/john",
+                          "methods": "GET, DELETE"
+                        },
+                        {
+                          "rel": "devices",
+                          "link": "http://localhost:3000/users/john/devices",
+                          "methods": "GET, POST"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "port": {
+        "title": "port",
+        "enum": [
+          8443,
+          443,
+          3000
+        ],
+        "type": "integer",
+        "example": 8443
+      },
+      "UserList": {
+        "title": "UserList",
+        "required": [
+          "users",
+          "pageNumber",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            },
+            "description": ""
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": ""
+          }
+        },
+        "example": {
+          "users": [
+            {
+              "userId": "john",
+              "links": [
+                {
+                  "rel": "self",
+                  "link": "http://localhost:3000/users/john",
+                  "methods": "GET, DELETE"
+                },
+                {
+                  "rel": "devices",
+                  "link": "http://localhost:3000/users/john/devices",
+                  "methods": "GET, POST"
+                }
+              ]
+            },
+            {
+              "userId": "edna",
+              "links": [
+                {
+                  "rel": "self",
+                  "link": "http://localhost:3000/users/edna",
+                  "methods": "GET, DELETE"
+                },
+                {
+                  "rel": "devices",
+                  "link": "http://localhost:3000/users/edna/devices",
+                  "methods": "GET, POST"
+                }
+              ]
+            }
+          ],
+          "pageNumber": 1,
+          "links": [
+            {
+              "rel": "next",
+              "link": "http://localhost:3000/users?page=2"
+            }
+          ]
+        }
+      },
+      "User": {
+        "title": "User",
+        "required": [
+          "userId"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "Device": {
+        "title": "Device",
+        "required": [
+          "deviceId"
+        ],
+        "type": "object",
+        "properties": {
+          "deviceId": {
+            "type": "string"
+          },
+          "deviceType": {
+            "type": "string"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            }
+          }
+        }
+      },
+      "Link": {
+        "title": "Link",
+        "required": [
+          "link",
+          "rel"
+        ],
+        "type": "object",
+        "properties": {
+          "rel": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          },
+          "methods": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}
